@@ -16,7 +16,9 @@ Lancer votre terminal de commande dans le dossier racine du projet et saisir la 
 
 Saisir "docker-compose down" afin de stopper le back-end
 
-Vous pouvez désormais consulter le site à l'adresse suivante : Http://localhost:8080
+Vous pouvez désormais consulter le site à l'adresse suivante :
+
+Http://localhost:8080
 
 # Pour les tests
 
@@ -31,3 +33,9 @@ Pour lancer tous les tests présents dans le dossier Cypress sans lancer l'inter
 Identifiant: test2@test.fr
 
 Mot de passe : testtest
+
+# Infos API
+
+Le swagger du projet se trouve à l'adresse suivante :
+
+http://localhost:8081/api/doc
