@@ -26,7 +26,8 @@ Pour accéder à l'interface Cypress, saisir la commande : npx cypress open
 
 Pour lancer tous les tests présents dans le dossier Cypress sans lancer l'interface, saisir la commande : npx cypress run
 
-#Infos login
+# Infos login
+
 Identifiant: test2@test.fr
 
 Mot de passe : testtest
