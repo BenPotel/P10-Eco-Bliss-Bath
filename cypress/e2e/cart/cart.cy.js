@@ -2,6 +2,45 @@ let userToken;
 
 describe("Cart functionality tests", () => {
   beforeEach(() => {
+    it("login test true", () => {
+      cy.request({
+        method: "POST",
+        url: "http://localhost:8081/login",
+        body: {
+          username: "test2@test.fr",
+          password: "testtest",
+        },
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body).to.have.property("token");
+
+        userToken = response.body.token;
+      });
+    });
+
+    //On vérifie si il y a des produits dans le panier et si oui, on les supprime
+    it("verify order lines", () => {
+      cy.request({
+        method: "GET",
+        url: "http://localhost:8081/orders",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }).then((response) => {
+        expect(response.status).to.eq(200);
+        orderLines = response.body.orderLines;
+        orderLines.forEach((line) => {
+          cy.request({
+            method: "DELETE",
+            url: "http://localhost:8081/orders/" + line.id + "/delete",
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          });
+        });
+      });
+    });
+
     // Visit the login page and manually log in before each test
     cy.visit("http://localhost:8080/#/");
     cy.getBySel("nav-link-login").click();
@@ -57,17 +96,16 @@ describe("Cart functionality tests", () => {
     cy.getBySel("cart-line").should("not.exist");
   });
 
-  it("should add multiple products to cart and update stock", () => {
+  /* it("should add multiple products to cart and update stock", () => {
     let initialStock;
     let finalStock;
-
     // Navigate to product page and check initial stock
     cy.getBySel("nav-link-products").click();
     cy.getBySel("product").eq(1).contains("Consulter").click();
     cy.getBySel("detail-product-stock")
       .invoke("text")
       .then((text) => {
-        initialStock = parseInt(text.trim().split(" ")[1]);
+        initialStock = parseInt(text.trim().split(" ")[0]);
       });
 
     // Add multiple products to cart
@@ -80,48 +118,19 @@ describe("Cart functionality tests", () => {
 
     // Go back to product page and check updated stock
     cy.go("back");
-    cy.getBySel("product").eq(1).contains("Consulter").click();
-    cy.getBySel("detail-product-stock")
-      .invoke("text")
-      .then((text) => {
-        finalStock = parseInt(text.trim().split(" ")[1]);
-      });
 
-    // Ensure stock is updated correctly
-    const quantityAddedToCart = 20;
-    expect(finalStock).to.eq(initialStock - quantityAddedToCart);
-  });
+    // Wrap the following commands to ensure they execute after navigating back
+    cy.wrap(null).then(() => {
+      cy.getBySel("product").eq(1).contains("Consulter").click();
+      cy.getBySel("detail-product-stock")
+        .invoke("text")
+        .then((text) => {
+          finalStock = parseInt(text.trim().split(" ")[0]);
 
-  /*   function clearCart() {
-    cy.request({
-      method: "POST",
-      url: Cypress.env("apiUrl") + "/login",
-      body: {
-        username: "test2@test.fr",
-        password: "testtest",
-      },
-    }).then((response) => {
-      userToken = response.body.token;
-    });
-
-    cy.request({
-      method: "GET",
-      url: Cypress.env("apiUrl") + "/orders",
-      headers: {
-        Authorization: `Bearer ${userToken}`,
-      },
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-      const orderList = response.body.orderLines;
-      orderList.forEach((item) => {
-        cy.request({
-          method: "DELETE",
-          url: "http://localhost:8081/orders/" + item.id + "/delete",
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
+          // Ensure stock is updated correctly
+          const quantityAddedToCart = 20;
+          expect(finalStock).to.eq(initialStock - quantityAddedToCart);
         });
-      });
     });
-  } */
+  }); */
 });

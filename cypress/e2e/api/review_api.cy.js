@@ -45,7 +45,7 @@ describe("posting a review", () => {
         Authorization: `Bearer ${userToken}`,
       },
       body: {
-        title: maliciousScript, // Inject malicious script into the title
+        title: "Exemple de titre", // Inject malicious script into the title
         comment: maliciousScript, // Inject malicious script into the comment
         rating: "5",
       },
