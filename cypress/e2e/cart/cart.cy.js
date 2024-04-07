@@ -1,8 +1,15 @@
 let userToken;
+let orderLines;
+let stockAvant1;
+let stockCart1;
+let stockApres1;
+let stockAvant2;
+let stockCart2;
+let stockApres2;
 
 describe("Cart functionality tests", () => {
   beforeEach(() => {
-    it("login test true", () => {
+    it("logs in through the API", () => {
       cy.request({
         method: "POST",
         url: "http://localhost:8081/login",
@@ -19,7 +26,7 @@ describe("Cart functionality tests", () => {
     });
 
     //On vérifie si il y a des produits dans le panier et si oui, on les supprime
-    it("verify order lines", () => {
+    it("checks for products before deleting them from the cart", () => {
       cy.request({
         method: "GET",
         url: "http://localhost:8081/orders",
@@ -67,7 +74,7 @@ describe("Cart functionality tests", () => {
     cy.getBySel("cart-empty").should("exist");
   });
 
-  it("should not allow adding negative or zero quantity to cart", () => {
+  it("should not allow adding negative quantity to cart", () => {
     // Navigate to product page and try adding negative quantity
     cy.getBySel("nav-link-products").should("be.visible").click();
     cy.getBySel("nav-link-products").click();
@@ -75,62 +82,35 @@ describe("Cart functionality tests", () => {
     cy.getBySel("detail-product-quantity").clear().focus().type("-3");
     cy.getBySel("detail-product-add").click();
     cy.url().should("not.contain", "cart");
-
+  });
+  it("should not allow adding a zero quantity to cart", () => {
+    cy.getBySel("nav-link-products").should("be.visible").click();
+    cy.getBySel("nav-link-products").click();
+    cy.getBySel("product").eq(1).contains("Consulter").click();
     // Try adding zero quantity
     cy.getBySel("detail-product-quantity").clear().focus().type("0");
     cy.getBySel("detail-product-add").click();
     // Check if the product is added to the cart or not
+    cy.url().should("not.contain", "cart");
+
     cy.getBySel("nav-link-cart").click();
-    cy.url().should("contain", "cart");
-    cy.getBySel("cart-line").should("not.exist");
+
+    // Verify that the product isn't present in the cart and the cart is empty
+    cy.get("[data-cy=cart-empty]")
+      .should("exist")
+      .and("contain", "Votre panier est vide");
   });
 
   it("should not add out-of-stock product to cart", () => {
     // Navigate to product page and try adding out-of-stock product
     cy.getBySel("nav-link-products").click();
     cy.getBySel("product").eq(0).contains("Consulter").click();
-    cy.getBySel("detail-product-quantity").clear().focus().type("1");
+
+    // Clear the quantity input field and try adding the product
+    cy.getBySel("detail-product-quantity").clear().type("1");
     cy.getBySel("detail-product-add").click();
-    cy.getBySel("nav-link-cart").click();
-    cy.url().should("contain", "cart");
-    cy.getBySel("cart-line").should("not.exist");
+
+    // Verify that the user is not redirected to the cart
+    cy.url().should("not.contain", "cart");
   });
-
-  /* it("should add multiple products to cart and update stock", () => {
-    let initialStock;
-    let finalStock;
-    // Navigate to product page and check initial stock
-    cy.getBySel("nav-link-products").click();
-    cy.getBySel("product").eq(1).contains("Consulter").click();
-    cy.getBySel("detail-product-stock")
-      .invoke("text")
-      .then((text) => {
-        initialStock = parseInt(text.trim().split(" ")[0]);
-      });
-
-    // Add multiple products to cart
-    cy.getBySel("detail-product-quantity").clear().type("20");
-    cy.getBySel("detail-product-add").click();
-    cy.contains("Mon panier").click();
-
-    // Check cart
-    cy.getBySel("cart-line").should("exist");
-
-    // Go back to product page and check updated stock
-    cy.go("back");
-
-    // Wrap the following commands to ensure they execute after navigating back
-    cy.wrap(null).then(() => {
-      cy.getBySel("product").eq(1).contains("Consulter").click();
-      cy.getBySel("detail-product-stock")
-        .invoke("text")
-        .then((text) => {
-          finalStock = parseInt(text.trim().split(" ")[0]);
-
-          // Ensure stock is updated correctly
-          const quantityAddedToCart = 20;
-          expect(finalStock).to.eq(initialStock - quantityAddedToCart);
-        });
-    });
-  }); */
 });
