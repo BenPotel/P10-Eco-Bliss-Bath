@@ -2,28 +2,45 @@ Cypress.Commands.add("getBySel", (selector, ...args) => {
   return cy.get(`[data-cy=${selector}]`, ...args);
 });
 
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add("login", () => {
+  const username = Cypress.env("username");
+  const password = Cypress.env("password");
+  cy.visit("");
+  cy.getBySel("nav-link-login").click();
+  cy.getBySel("login-input-username").type(username);
+  cy.getBySel("login-input-password").type(password);
+  cy.getBySel("login-submit").click();
+  cy.contains("Mon panier").should("be.visible");
+});
+
+Cypress.Commands.add("getToken", () => {
+  return cy
+    .request({
+      method: "POST",
+      url: Cypress.env("apiUrl") + "/login",
+      body: {
+        username: Cypress.env("username"),
+        password: Cypress.env("password"),
+      },
+      failOnStatusCode: false, // Prevent Cypress from treating non-2xx responses as failures
+    })
+    .then((response) => {
+      if (response.status === 200 && response.body && response.body.token) {
+        // If response is successful and contains token, return the token
+        return response.body.token;
+      } else {
+        // If response is not successful or token is not found, log an error and return null
+        Cypress.log({
+          name: "Token Retrieval",
+          message: "Failed to retrieve token",
+          consoleProps: () => {
+            return {
+              Status: response.status,
+              Body: response.body,
+            };
+          },
+        });
+        return null;
+      }
+    });
+});

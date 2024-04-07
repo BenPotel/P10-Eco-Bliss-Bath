@@ -4,7 +4,7 @@ describe("api login request", () => {
   it("enters correct username and password ", () => {
     cy.request({
       method: "POST",
-      url: "http://localhost:8081/login",
+      url: Cypress.env("apiUrl") + "/login",
       body: {
         username: "test2@test.fr",
         password: "testtest",
@@ -20,7 +20,7 @@ describe("api login request", () => {
   it("enters incorrect password", () => {
     cy.request({
       method: "POST",
-      url: "http://localhost:8081/login",
+      url: Cypress.env("apiUrl") + "/login",
       body: {
         username: "test2@test.fr",
         password: "1234",
@@ -34,7 +34,7 @@ describe("api login request", () => {
   it("enters incorrect e-mail adress", () => {
     cy.request({
       method: "POST",
-      url: "http://localhost:8081/login",
+      url: Cypress.env("apiUrl") + "/login",
       body: {
         username: "testing@test.fr",
         password: "testtest",

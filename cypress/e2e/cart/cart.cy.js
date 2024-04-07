@@ -1,35 +1,17 @@
-let userToken;
-let orderLines;
-let stockAvant1;
-let stockCart1;
-let stockApres1;
-let stockAvant2;
-let stockCart2;
-let stockApres2;
-
 describe("Cart functionality tests", () => {
+  let userToken;
+  let orderLines;
+
   beforeEach(() => {
-    it("logs in through the API", () => {
-      cy.request({
-        method: "POST",
-        url: "http://localhost:8081/login",
-        body: {
-          username: "test2@test.fr",
-          password: "testtest",
-        },
-      }).then((response) => {
-        expect(response.status).to.eq(200);
-        expect(response.body).to.have.property("token");
+    cy.login();
+    cy.getToken().then((token) => {
+      // Set userToken variable after getToken resolves
+      userToken = token;
 
-        userToken = response.body.token;
-      });
-    });
-
-    //On vérifie si il y a des produits dans le panier et si oui, on les supprime
-    it("checks for products before deleting them from the cart", () => {
+      // Delete products from the cart before each test
       cy.request({
         method: "GET",
-        url: "http://localhost:8081/orders",
+        url: Cypress.env("apiUrl") + "/orders",
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -39,7 +21,7 @@ describe("Cart functionality tests", () => {
         orderLines.forEach((line) => {
           cy.request({
             method: "DELETE",
-            url: "http://localhost:8081/orders/" + line.id + "/delete",
+            url: Cypress.env("apiUrl") + "/orders/" + line.id + "/delete",
             headers: {
               Authorization: `Bearer ${userToken}`,
             },
@@ -47,16 +29,7 @@ describe("Cart functionality tests", () => {
         });
       });
     });
-
-    // Visit the login page and manually log in before each test
-    cy.visit("http://localhost:8080/#/");
-    cy.getBySel("nav-link-login").click();
-    cy.getBySel("login-input-username").type("test2@test.fr");
-    cy.getBySel("login-input-password").type("testtest");
-    cy.getBySel("login-submit").click();
-    cy.contains("Mon panier").should("be.visible");
   });
-
   it("should add a product to cart and delete it", () => {
     // Navigate to product page and add product
     cy.getBySel("nav-link-products").should("be.visible").click();

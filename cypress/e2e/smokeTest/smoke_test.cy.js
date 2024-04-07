@@ -1,6 +1,6 @@
 describe("smoke test", () => {
   it("checks the presence of fields and connection button", () => {
-    cy.visit("http://localhost:8080/#/");
+    cy.visit("");
     cy.getBySel("nav-link-login").click();
     cy.getBySel("login-input-username").should("exist");
     cy.getBySel("login-input-password").should("exist");
@@ -9,7 +9,7 @@ describe("smoke test", () => {
 
   it("checks the presence of 'add to cart' and product availability", () => {
     //Connecting first to access the cart section
-    cy.visit("http://localhost:8080/#/");
+    cy.visit("");
     cy.getBySel("nav-link-login").click();
     cy.getBySel("login-input-username").type("test2@test.fr");
     cy.getBySel("login-input-password").type("testtest");
