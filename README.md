@@ -26,7 +26,7 @@ Installer la librairie Cypress en saisissant la commande suivante dans votre ter
 
 Pour accéder à l'interface Cypress, saisir la commande : npx cypress open
 
-Pour lancer tous les tests présents dans le dossier Cypress sans lancer l'interface, saisir la commande : npx cypress run
+Pour lancer tous les tests présents dans le dossier Cypress sans lancer l'interface et obtenir un rapport de test, saisir la commande : npx cypress run
 
 # Infos login
 
