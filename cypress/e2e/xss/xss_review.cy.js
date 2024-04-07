@@ -1,10 +1,6 @@
 describe("XSS vulnerability in review form as website user", () => {
   it("should not successfully inject malicious script into the review form fields", () => {
-    cy.visit("");
-    cy.getBySel("nav-link-login").click(); // Assuming this selects the login link
-    cy.getBySel("login-input-username").type("test2@test.fr");
-    cy.getBySel("login-input-password").type("testtest");
-    cy.getBySel("login-submit").click();
+    cy.login();
 
     cy.wait(1000);
 
