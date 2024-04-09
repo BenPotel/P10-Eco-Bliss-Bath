@@ -106,7 +106,7 @@ describe("checking cart with api", () => {
           product: "3", // '3' being the ID of the out-of-stock product in this case
           quantity: "1",
         },
-        failOnStatusCode: false, // Prevent the test from failing on non-2xx status codes
+        failOnStatusCode: false,
       }).then((response) => {
         // Check if adding the out-of-stock product to cart fails
         if (response.status !== 200) {
