@@ -103,7 +103,7 @@ describe("checking cart with api", () => {
           Authorization: `Bearer ${userToken}`,
         },
         body: {
-          product: "1", // '1' being the ID of the out-of-stock product in this case
+          product: "3", // '3' being the ID of the out-of-stock product in this case
           quantity: "1",
         },
         failOnStatusCode: false, // Prevent the test from failing on non-2xx status codes

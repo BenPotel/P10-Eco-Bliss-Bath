@@ -45,7 +45,7 @@ describe("posting a review", () => {
         Authorization: `Bearer ${userToken}`,
       },
       body: {
-        title: "Exemple de titre", // Inject malicious script into the title
+        title: "Exemple de titre",
         comment: maliciousScript, // Inject malicious script into the comment
         rating: "5",
       },
@@ -53,7 +53,6 @@ describe("posting a review", () => {
       // Check if the response status is 200, which means the request was successful
       expect(response.status).to.eq(200);
 
-      // Convert the response body to a string
       const responseBodyString = JSON.stringify(response.body);
 
       // Check if the response body contains the injected script
